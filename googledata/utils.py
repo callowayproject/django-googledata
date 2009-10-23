@@ -104,13 +104,13 @@ def get_top_pages(ga_table_id, num_results=10, days_past=1, path_filter='', titl
     acct_client = service.AnalyticsDataService()
     acct_client.ClientLogin(LOGIN, PASSWORD)
     
-    sdate = datetime.date.today() - datetime.timedelta(days=days_past)
+    sdate = datetime.date.today() - datetime.timedelta(days=int(days_past))
     start_date = sdate.isoformat()
     end_date = datetime.date.today().isoformat()
     dimensions = "ga:pageTitle,ga:pagePath"
     metrics = "ga:pageviews"
     sort = "-ga:pageviews"
-    results = 10
+    results = int(num_results)
     
     if path_filter:
         filter_str = "ga:pagePath=~%s" % path_filter
@@ -137,9 +137,5 @@ def get_top_pages(ga_table_id, num_results=10, days_past=1, path_filter='', titl
             result_item['title'] = item.pageTitle
         
         results.append(result_item)
-    cache_set(cache_key)
+    cache_set(cache_key, results)
     return results
-
-#get_top_pages('ga:6488592', path_filter="/news/*")
-print get_top_pages('ga:22442888', title_sep='|')
-#print get_account_list()

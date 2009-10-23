@@ -1,10 +1,11 @@
 from django import template
 from googledata.utils import get_top_pages
+import re
 
 register = template.Library()
 
 
-def GetTopPagesNode(template.Node):
+class GetTopPagesNode(template.Node):
     """
     Renders the top pages to the context variable
     """
@@ -32,15 +33,15 @@ def do_get_top_pages(parser, token):
     except ValueError:
         raise template.TemplateSyntaxError, "%r tag requires arguments" % token.contents.split()[0]
     
-    m = re.search(r'"(..:.+?)"\s*(.*?) as (\w+)', arg)
+    m = re.search(r'"(..:.+?)"\s*(.*?) as (\w+)', args)
     if not m:
         raise template.TemplateSyntaxError, "%r tag had invalid arguments. It requires at least a ga_tableid and variable name." % tag_name
     table_id, key_args, var_name = m.groups()
     kwargs = {}
     for karg in key_args.split():
-        key, val = karg.split('=').strip('"')
+        key, val = karg.strip('"').split('=')
         if key in valid_params:
-            kwargs[key] = val
+            kwargs[str(key)] = str(val)
     return GetTopPagesNode(table_id, var_name, **kwargs)
 
 register.tag('get_top_pages', do_get_top_pages)
