@@ -15,7 +15,13 @@ class GetTopPagesNode(template.Node):
         self.kwargs = kwargs
     
     def render(self, context):
-        context[self.var_name] = get_top_pages(self.table_id, **self.kwargs)
+        resolved_kwargs = {}
+        for key, val in self.kwargs:
+            try:
+                resolved_kwargs[key] = template.Variable(val).resolve(context)
+            except template.VariableDoesNotExist:
+                resolved_kwargs[key] = val
+        context[self.var_name] = get_top_pages(self.table_id, **resolved_kwargs)
         return ''
     
 

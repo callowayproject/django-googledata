@@ -1,5 +1,5 @@
 from gdata.analytics import service
-import datetime, time
+import datetime, time, re
 from django.core.cache import cache
 from django.conf import settings as global_settings
 from settings import LOGIN, PASSWORD, CACHE_LENGTH, CALL_LENGTH
@@ -113,6 +113,11 @@ def get_top_pages(ga_table_id, num_results=10, days_past=1, path_filter='', titl
     results = int(num_results)
     
     if path_filter:
+        # If you are passing in a variable for the path filter (like request.path)
+        # You can't add the * at the end. This will hopefully detect if a true
+        # regex was passed, and if not, add a * at the end
+        if not re.match(r'.*[*.+].*',path_filter):
+            path_filter = path_filter + '*'
         filter_str = "ga:pagePath=~%s" % path_filter
     else:
         filter_str = ''
