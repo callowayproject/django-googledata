@@ -16,7 +16,7 @@ class GetTopPagesNode(template.Node):
     
     def render(self, context):
         resolved_kwargs = {}
-        for key, val in self.kwargs:
+        for key, val in self.kwargs.items():
             try:
                 resolved_kwargs[key] = template.Variable(val).resolve(context)
             except template.VariableDoesNotExist:
