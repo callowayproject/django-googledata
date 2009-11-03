@@ -95,7 +95,8 @@ def get_top_pages(ga_table_id, num_results=10, days_past=1, path_filter='', titl
         ``title_sep`` is a ``string`` or ``[ {'title': 'pagetitle1 | pagetitle2', 'path': '/path/to/page', 'pageviews': 1000 }, ... ]``
         if ``title_sep`` is ``None``.
     """
-    cache_key = "get_top_pages.%s.%s.%s.%s.%s" % (ga_table_id, num_results, days_past, path_filter, title_sep)
+    import urllib	
+    cache_key = "get_top_pages.%s.%s.%s.%s.%s" % (ga_table_id, num_results, days_past, urllib.quote(path_filter), title_sep)
     cache_results = cache_get(cache_key)
     
     if cache_results:
